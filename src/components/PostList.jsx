@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PostItem from "./PostItem";
 
-function PostList({ posts }) {
+function PostList({ posts, remove }) {
 //   const [liveSearchInput, setLiveSearchInput] = useState("");
 //   const [foundPosts, setFountPosts] = useState([]);
 
@@ -27,7 +27,7 @@ function PostList({ posts }) {
       </form> */}
 
       {posts.map((post, index) => (
-        <PostItem  number={index + 1} key={post.id}  post={post} />
+        <PostItem remove={remove}  number={index + 1} key={post.id}  post={post} />
       ))}
     </>
   );

@@ -1,5 +1,6 @@
+import MyButton from "../UI/MyButton/MyButton";
 import "../styles/Post.css";
-function PostItem({post, number}) {
+function PostItem({post, number, remove}) {
 
 
 
@@ -10,7 +11,7 @@ function PostItem({post, number}) {
           <h2>{number}. {post.title}</h2>
           <p>{post.body}</p>
         </div>
-        <button className="delete_button">Удалить</button>
+        <MyButton onClick={() => remove(post)}  className="delete_button">Удалить</MyButton>
       </div>
     </>
   );
