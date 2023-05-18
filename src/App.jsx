@@ -3,9 +3,9 @@ import PostList from "./components/PostList";
 import PostFom from "./components/PostForm";
 import MySelect from "./UI/MySelect/MySelect";
 import MyInput from "./UI/MyInput/MyInput";
+import PostFilter from "./components/PostFilter";
 
 function App() {
-  const [selectedSort, setSelectedSort] = useState("");
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -19,32 +19,27 @@ function App() {
     },
     { id: 3, title: "C#", body: "My name is Iznaur, I am Frontend Developer" },
   ]);
-  const [searchPost, setSearchPost] = useState("");
-
-  const sortData = [
-    { value: "title", nameSort: "По названию" },
-    { value: "body", nameSort: "По очереди" },
-  ];
-
+  // const [selectedSort, setSelectedSort] = useState("");
+  // const [searchPost, setSearchPost] = useState("");
+  const [filter, setFilter] = useState({ sort: "", query: "" });
   // СОРТИРОВКА
   const memoSeacrchValue = useMemo(() => {
     console.log("ascascasc");
-    if (selectedSort) {
+    if (filter.sort) {
       return [...posts].sort((a, b) =>
-        a[selectedSort]?.localeCompare(b[setSelectedSort])
+        a[filter.sort]?.localeCompare(b[filter.query])
       );
     } else {
       return posts;
     }
-  }, [posts, selectedSort]);
-
-
+  }, [posts, filter.sort]);
+  console.log(memoSeacrchValue);
   // ЖИВОЙ  ПОИСК
   const sortedAndSearchValue = useMemo(() => {
-    return memoSeacrchValue.filter((item, index) =>
-      item.title.toLowerCase().includes(searchPost.toLocaleLowerCase())
+    return memoSeacrchValue.filter((item) =>
+      item.title.toLowerCase().includes(filter.query.toLocaleLowerCase())
     );
-  }, [searchPost, posts]);
+  }, [filter.query, posts]);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -54,27 +49,12 @@ function App() {
     setPosts(posts.filter((p) => p.id !== post.id));
   };
 
-  const sortPosts = (sort) => {
-    setSelectedSort(sort);
-  };
-
   return (
     <div className="App">
       <PostFom create={createPost} />
       <hr style={{ margin: "15px 0", color: "red" }} />
-      <MyInput
-        placeholder="Поиск по названию"
-        onChange={(event) => setSearchPost(event.target.value)}
-        value={searchPost}
-      />
-      <MySelect
-        onChange={sortPosts}
-        value={selectedSort}
-        options={sortData}
-        defaultValue={"Сортировка по:"}
-      />
-
-      {posts.length !== 0 ? (
+      <PostFilter filter={filter} setFilter={setFilter} />
+      {sortedAndSearchValue.length !== 0 ? (
         <PostList remove={removePost} posts={sortedAndSearchValue} />
       ) : (
         <h1>Постов нет</h1>
