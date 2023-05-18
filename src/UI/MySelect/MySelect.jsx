@@ -4,13 +4,12 @@ function MySelect({ options, defaultValue, onChange, value }) {
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        placeholder="Сортировка по"
         style={{ margin: "10px 0", width: "120px" }}
       >
         <option disabled>{defaultValue}</option>
 
-        {options.map((sortNames, index) => (
-          <option key={index} value="value1">
+        {options.map((sortNames) => (
+          <option key={sortNames.value} value={sortNames.value}>
             {sortNames.nameSort}
           </option>
         ))}

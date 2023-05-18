@@ -30,6 +30,7 @@ create(newPost)
 
     return ( 
         <form>
+          {/* ИНПУТ ПИШЕТСЯ ОДИНАРНЫМ ПОТОМУ ЧТО МЫ НЕ ПЕРЕДАЕМ ДОЧЕРНИЕ ЭЛЕМЕНТЫ */}
         <MyInput
           value={post.title}
           onChange={hundleInputTitle}
@@ -43,6 +44,8 @@ create(newPost)
           type="text"
           placeholder="Напиши пост"
         />
+
+         {/* БАТТОН ПИШЕТСЯ С ЗАКРЫВАЮШИМСЯ ТЕГОМ ПОТОМУ ЧТО ПЕРЕДАЕМ children 'Добавить пост' */}
         <MyButton onClick={addNewPost} disabled={false}>
           Добавить пост
         </MyButton>

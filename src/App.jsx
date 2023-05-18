@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import PostList from "./components/PostList";
 import PostFom from "./components/PostForm";
 import MySelect from "./UI/MySelect/MySelect";
+import MyInput from "./UI/MyInput/MyInput";
 
 function App() {
   const [selectedSort, setSelectedSort] = useState("");
@@ -18,11 +19,33 @@ function App() {
     },
     { id: 3, title: "C#", body: "My name is Iznaur, I am Frontend Developer" },
   ]);
+  const [searchPost, setSearchPost] = useState("");
 
-  const sort = [
+  const sortData = [
     { value: "title", nameSort: "По названию" },
-    { value: "index", nameSort: "По очереди" },
+    { value: "body", nameSort: "По очереди" },
   ];
+
+  // СОРТИРОВКА
+  const memoSeacrchValue = useMemo(() => {
+    console.log("ascascasc");
+    if (selectedSort) {
+      return [...posts].sort((a, b) =>
+        a[selectedSort]?.localeCompare(b[setSelectedSort])
+      );
+    } else {
+      return posts;
+    }
+  }, [posts, selectedSort]);
+
+  const sortedPost = memoSeacrchValue;
+
+  // ЖИВОЙ  ПОИСК
+  const sortedAndSearchValue = useMemo(() => {
+    return [...posts].filter((item, index) =>
+      item.title.toLowerCase().includes(searchPost.toLocaleLowerCase())
+    );
+  }, [searchPost, sortedPost]);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -34,23 +57,26 @@ function App() {
 
   const sortPosts = (sort) => {
     setSelectedSort(sort);
-    // setPosts([...posts].sort((a, b) => a[sort].localeCompare(b[sort])));
-    console.log(sort);
   };
 
   return (
     <div className="App">
       <PostFom create={createPost} />
       <hr style={{ margin: "15px 0", color: "red" }} />
+      <MyInput
+        placeholder="Поиск по названию"
+        onChange={(event) => setSearchPost(event.target.value)}
+        value={searchPost}
+      />
       <MySelect
         onChange={sortPosts}
         value={selectedSort}
-        options={sort}
+        options={sortData}
         defaultValue={"Сортировка по:"}
       />
 
       {posts.length !== 0 ? (
-        <PostList remove={removePost} posts={posts} />
+        <PostList remove={removePost} posts={sortedAndSearchValue} />
       ) : (
         <h1>Постов нет</h1>
       )}
