@@ -38,14 +38,13 @@ function App() {
     }
   }, [posts, selectedSort]);
 
-  const sortedPost = memoSeacrchValue;
 
   // ЖИВОЙ  ПОИСК
   const sortedAndSearchValue = useMemo(() => {
-    return [...posts].filter((item, index) =>
+    return memoSeacrchValue.filter((item, index) =>
       item.title.toLowerCase().includes(searchPost.toLocaleLowerCase())
     );
-  }, [searchPost, sortedPost]);
+  }, [searchPost, posts]);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
