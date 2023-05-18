@@ -3,7 +3,7 @@
 
 <h1> Запуск проекта:</h1>
 
-npm i 
-npm start
+<h2> npm i </h2>
+<h2>npm start</h2>
 
 
