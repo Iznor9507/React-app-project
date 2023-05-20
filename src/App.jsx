@@ -11,7 +11,6 @@ import axios from "axios";
 
 function App() {
   const [posts, setPosts] = useState([]);
-
   const [modal, setModal] = useState(false);
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
@@ -23,7 +22,7 @@ const res = await axios.get('https://jsonplaceholder.typicode.com/posts')
 setPosts(res.data)
 }
 fetchPosts()
-}, [])
+}, [filter])
   
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
