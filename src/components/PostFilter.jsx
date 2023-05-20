@@ -18,7 +18,7 @@ function PostFilter({ filter, setFilter }) {
         value={filter.query}
       />
       <MySelect
-        onChange={filter.sort}
+        onChange={selectedSort => setFilter({...filter, sort: selectedSort})}
         value={filter.sort}
         options={sortData}
         defaultValue={"Сортировка по:"}

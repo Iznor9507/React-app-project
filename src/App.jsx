@@ -1,64 +1,49 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PostList from "./components/PostList";
-import PostFom from "./components/PostForm";
+import PostForm from "./components/PostForm";
 import MySelect from "./UI/MySelect/MySelect";
 import MyInput from "./UI/MyInput/MyInput";
 import PostFilter from "./components/PostFilter";
+import MyModal from "./components/MyModal/MyModal";
+import MyButton from "./UI/MyButton/MyButton";
+import { usePosts } from "./hooks/usePosts";
+import axios from "axios";
 
 function App() {
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: "Python",
-      body: "My name is Iznaur, I am Frontend Developer",
-    },
-    {
-      id: 2,
-      title: "JavaScript",
-      body: "My nvxvxcxcxcxcame is Iznaur, I am Frontend Developer",
-    },
-    { id: 3, title: "C#", body: "My name is Iznaur, I am Frontend Developer" },
-  ]);
-  // const [selectedSort, setSelectedSort] = useState("");
-  // const [searchPost, setSearchPost] = useState("");
-  const [filter, setFilter] = useState({ sort: "", query: "" });
-  // СОРТИРОВКА
-  const memoSeacrchValue = useMemo(() => {
-    console.log("ascascasc");
-    if (filter.sort) {
-      return [...posts].sort((a, b) =>
-        a[filter.sort]?.localeCompare(b[filter.query])
-      );
-    } else {
-      return posts;
-    }
-  }, [posts, filter.sort]);
-  console.log(memoSeacrchValue);
-  // ЖИВОЙ  ПОИСК
-  const sortedAndSearchValue = useMemo(() => {
-    return memoSeacrchValue.filter((item) =>
-      item.title.toLowerCase().includes(filter.query.toLocaleLowerCase())
-    );
-  }, [filter.query, posts]);
+  const [posts, setPosts] = useState([]);
 
+  const [modal, setModal] = useState(false);
+  const [filter, setFilter] = useState({ sort: "", query: "" });
+  const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+
+
+useEffect(() => { 
+async function fetchPosts() {
+const res = await axios.get('https://jsonplaceholder.typicode.com/posts')
+setPosts(res.data)
+}
+fetchPosts()
+}, [])
+  
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
+    setModal(false);
   };
 
   const removePost = (post) => {
     setPosts(posts.filter((p) => p.id !== post.id));
+    setModal(false);
   };
 
   return (
     <div className="App">
-      <PostFom create={createPost} />
+      <MyButton onClick={() => setModal(true)}>Добавить пост</MyButton>
+      <MyModal visible={modal} setVisible={setModal}>
+        <PostForm create={createPost} />
+      </MyModal>
       <hr style={{ margin: "15px 0", color: "red" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
-      {sortedAndSearchValue.length !== 0 ? (
-        <PostList remove={removePost} posts={sortedAndSearchValue} />
-      ) : (
-        <h1>Постов нет</h1>
-      )}
+      <PostList remove={removePost} posts={sortedAndSearchedPosts} />
     </div>
   );
 }
