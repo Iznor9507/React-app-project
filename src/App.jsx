@@ -1,13 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
-import MySelect from "./UI/MySelect/MySelect";
-import MyInput from "./UI/MyInput/MyInput";
 import PostFilter from "./components/PostFilter";
 import MyModal from "./components/MyModal/MyModal";
 import MyButton from "./UI/MyButton/MyButton";
 import { usePosts } from "./hooks/usePosts";
-import axios from "axios";
+import PostService from "./API/PostService";
+import Loader from "./UI/Loader/Loader";
+import { useFetching } from "./hooks/useFetching";
+import { getPageCount, numberPages } from "./utils/pages";
+import Pagination from "./UI/pagination/Pagination";
+import PrevAndNextPaginationButtons from "./UI/pagination/PrevAndNextPaginationButtons";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -15,15 +18,31 @@ function App() {
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
+  const [pagination, setPagination] = useState({
+    limit: 5,
+    page: 0,
+    totalPage: 0,
+  });
 
-useEffect(() => { 
-async function fetchPosts() {
-const res = await axios.get('https://jsonplaceholder.typicode.com/posts')
-setPosts(res.data)
-}
-fetchPosts()
-}, [filter])
-  
+  const [fetchPost, isPostsLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll(pagination.limit, pagination.page);
+
+    // ВЫЧИТЫВАЕМ КОЛИЧЕСТВО СТРАНИЦ
+    const totalCount = posts.headers["x-total-count"];
+    setPagination({
+      ...pagination,
+      totalPage: getPageCount(totalCount, pagination.limit),
+    });
+    setPosts(posts.data);
+  });
+
+  //
+  const getLengthPages = numberPages(pagination.totalPage);
+
+  useEffect(() => {
+    fetchPost();
+  }, [pagination.page, pagination.limit]);
+
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
     setModal(false);
@@ -42,7 +61,26 @@ fetchPosts()
       </MyModal>
       <hr style={{ margin: "15px 0", color: "red" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
-      <PostList remove={removePost} posts={sortedAndSearchedPosts} />
+      {postError && (
+        <h1 style={{ color: "red" }}>Произошла ошибка {postError}</h1>
+      )}
+
+      <PrevAndNextPaginationButtons
+        setPagination={setPagination}
+        pagination={pagination}
+      />
+      {isPostsLoading ? (
+        <div style={{ marginTop: "30px" }}>
+          <Loader />
+        </div>
+      ) : (
+        <PostList remove={removePost} posts={sortedAndSearchedPosts} />
+      )}
+      <Pagination
+        setPagination={setPagination}
+        getLengthPages={getLengthPages}
+        pagination={pagination}
+      />
     </div>
   );
 }
