@@ -30,16 +30,15 @@ function PostForm({ create }) {
     <form style={{ display: "flex", flexDirection: "column" }}>
       <div>
         {/* ИНПУТ ПИШЕТСЯ ОДИНАРНЫМ ПОТОМУ ЧТО МЫ НЕ ПЕРЕДАЕМ ДОЧЕРНИЕ ЭЛЕМЕНТЫ */}
-        <MyInput 
-        style={{height: '30px'}}
+        <MyInput
+          style={{ height: "30px" }}
           value={post.title}
           onChange={hundleInputTitle}
           type="text"
           placeholder="Напиши заголовок"
         />
         <MyInput
-        style={{height: '30px'}}
-
+          style={{ height: "30px" }}
           value={post.body}
           onChange={hundleInputBody}
           type="text"
