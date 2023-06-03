@@ -27,15 +27,15 @@ function Posts() {
   });
 
   const [fetchPost, isPostsLoading, postError] = useFetching(async () => {
-    const posts = await PostService.getAll(pagination.limit, pagination.page);
+    const responce = await PostService.getAll(pagination.limit, pagination.page);
 
     // ВЫЧИТЫВАЕМ КОЛИЧЕСТВО СТРАНИЦ
-    const totalCount = posts.headers["x-total-count"];
+    const totalCount = responce.headers["x-total-count"];
     setPagination({
       ...pagination,
       totalPage: getPageCount(totalCount, pagination.limit),
     });
-    setPosts(posts.data);
+    setPosts(responce.data);
   });
 
   //
